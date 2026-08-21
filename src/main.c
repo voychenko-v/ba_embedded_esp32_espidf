@@ -42,7 +42,6 @@ static uint16_t released_count = 0;
 /* ---------- Прототипи ---------- */
 static void button_gpio_init(void);
 static void button_fsm_update(void);
-static bool button_is_pressed(void);
 static bool button_was_just_pressed(void);
 static bool button_was_just_released(void);
 
@@ -100,10 +99,6 @@ static void button_fsm_update(void)
     }
 }
 
-static bool button_is_pressed(void)
-{
-    return btn.state == BTN_PRESSED;
-}
 
 static bool button_was_just_pressed(void)
 {
