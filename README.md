@@ -1,5 +1,6 @@
-# ESP32-S3-N16R8 — Навчальний проєкт з використанням espidf
+# Усунення брязкоту контактів кнопки (debounce)
+Проект реалізований на Arduino https://github.com/voychenko-v/ba_embedded_esp32/tree/09_debounce перероблено на espidf 
 
-Репозиторій з практичними завданнями для вивчення ESP32-S3 на PlatformIO.
-
-Кожне завдання зберігається в окремій гілці — код, README та демонстрація (GIF) лежать разом у відповідній гілці.
+## Polling + FSM (без interrupts)
+- Oпитування кожні 10 мс
+- Debounce як FSM: `IDLE → PRESS_DEBOUNCE → PRESSED → RELEASE_DEBOUNCE → IDLE`
