@@ -59,11 +59,6 @@ void app_main(void)
 
     }
 
-    ESP_ERROR_CHECK(adc_oneshot_del_unit(adc1_handle));
-    if (do_calibration1_chan0) {
-        adc_calibration_deinit(adc1_cali_chan0_handle);
-    }
-
 }
 
 
@@ -97,10 +92,4 @@ static bool adc_calibration_init(adc_unit_t unit, adc_channel_t channel, adc_att
     }
 
     return calibrated;
-}
-
-static void adc_calibration_deinit(adc_cali_handle_t handle)
-{
-    ESP_LOGI(TAG, "deregister %s calibration scheme", "Curve Fitting");
-    ESP_ERROR_CHECK(adc_cali_delete_scheme_curve_fitting(handle));
 }
