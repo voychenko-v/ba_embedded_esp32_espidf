@@ -14,9 +14,13 @@ const static char *TAG = "ADC";
 #define ADC1_PIN1 ADC_CHANNEL_0
 #define ADC_ATTEN ADC_ATTEN_DB_12
 #define ADC_BITWIDTH ADC_BITWIDTH_12
+#define ADC_CAPACITY ((1 << ADC_BITWIDTH) - 1)
 
+static const float v_ref = 3.3;
 static int adc_raw = 0;
 static int voltage = 0;
+static float error = 0;
+static float calc_voltage = 0;
 static bool adc_calibration_init(adc_unit_t unit, adc_channel_t channel, adc_atten_t atten, adc_cali_handle_t *out_handle);
 static void adc_calibration_deinit(adc_cali_handle_t handle);
 
@@ -43,11 +47,14 @@ void app_main(void)
 
     while (1) {
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_PIN1, &adc_raw));
-        ESP_LOGI(TAG, "ADC%d Channel[%d] Raw Data: %d", ADC_UNIT_1 + 1, ADC1_PIN1, adc_raw);
+        calc_voltage = ((float)adc_raw / (float)ADC_CAPACITY) * v_ref * 1000 ;
+
         if (do_calibration1_chan0) {
             ESP_ERROR_CHECK(adc_cali_raw_to_voltage(adc1_cali_chan0_handle, adc_raw, &voltage));
-            ESP_LOGI(TAG, "ADC%d Channel[%d] Cali Voltage: %d mV", ADC_UNIT_1 + 1, ADC1_PIN1, voltage);
         }
+        error = (((calc_voltage - voltage) / voltage) * 100);
+        ESP_LOGI(TAG, "ADC%d Channel[%d]: Raw: %d | Calibration Voltage: %d mV | Calc Voltage: %4.2f mV || Error: %4.2f %%", 
+            ADC_UNIT_1 + 1, ADC1_PIN1, adc_raw, voltage, calc_voltage, error);
         vTaskDelay(pdMS_TO_TICKS(1000));
 
     }
